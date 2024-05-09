@@ -15,15 +15,10 @@ ldd "$BENCHMARK_EXE"
 cp $SRC_DIR/Benchmarks/tea_bm_5.in tea.in
 cp $SRC_DIR/tea.problems tea.problems
 
-if [ "$MODEL" = chapel ]; then
-    opts+=("--gpuUseStreamPerTask=false")
-fi
-
 export OMP_TARGET_OFFLOAD=MANDATORY
 
 case "$MODEL" in
 omp | std-* | cuda | kokkos | chapel)
-    "$BENCHMARK_EXE" --list
     "$BENCHMARK_EXE" "${opts[@]:-}"
     ;;
 *)
