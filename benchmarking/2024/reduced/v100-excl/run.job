@@ -1,0 +1,27 @@
+#!/bin/bash
+
+: >"$OUT_FILE"
+exec &> >(tee -a "$OUT_FILE")
+
+set -eu
+
+cd "$RUN_DIR" || exit 2
+date
+echo "$PWD"
+ldd "$BENCHMARK_EXE"
+
+export OMP_TARGET_OFFLOAD=MANDATORY
+
+case "$MODEL" in
+kokkos | cuda | omp-target | chapel)
+    "$BENCHMARK_EXE" dot 268435456
+    "$BENCHMARK_EXE" complex_sum 268435456
+    "$BENCHMARK_EXE" complex_sum_soa 268435456
+    "$BENCHMARK_EXE" complex_min 268435456
+    "$BENCHMARK_EXE" field_summary
+    ;;
+*)
+    echo "Unknown run configuration for model '$MODEL'"
+    exit 1
+    ;;
+esac
