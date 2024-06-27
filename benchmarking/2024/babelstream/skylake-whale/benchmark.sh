@@ -7,6 +7,7 @@ function usage() {
   echo "Usage: ./benchmark.sh build|run [COMPILER] [MODEL]"
   echo
   echo "Valid compilers:"
+  echo "  chapel-2.0"
   echo "  chapel-1.33"
   echo "  clang-17.0.6"
   echo
@@ -35,6 +36,10 @@ handle_cmd "${1}" "${2}" "${3}" "babelstream" "skylake"
 export USE_MAKE=false
 
 case "$COMPILER" in
+chapel-2.0)
+  source /opt/chapel-2.0/util/setchplenv.bash
+  USE_MAKE=true
+  ;;
 chapel-1.33)
   source /opt/chapel-1.33/util/setchplenv.bash
   USE_MAKE=true

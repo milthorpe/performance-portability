@@ -7,8 +7,11 @@ function usage() {
   echo "Usage: ./benchmark.sh build|run [COMPILER] [MODEL]"
   echo
   echo "Valid compilers:"
+  echo "  chapel-2.1"
+  echo "  chapel-2.0"
   echo "  chapel-1.33"
-  echo "  cuda-11"
+  echo "  chapel-1.32"
+  echo "  cuda-12"
   echo "  clang-17.0.6"
   echo
   echo "Valid models:"
@@ -35,16 +38,34 @@ source "${SCRIPT_DIR}/../fetch_src.sh"
 handle_cmd "${1}" "${2}" "${3}" "miniBUDE" "p100"
 
 export USE_MAKE=false
-export CUDA_PATH=/usr/local/cuda-11.5
+export CUDA_PATH=/usr/local/cuda-12.4
 
 case "$COMPILER" in
+chapel-2.1)
+  export PATH=${CUDA_PATH}/bin:$PATH
+  export CHPL_CUDA_PATH=$CUDA_PATH
+  source /opt/chapel-2.1/util/setchplenv.bash
+  USE_MAKE=true
+  ;;
+chapel-2.0)
+  export PATH=${CUDA_PATH}/bin:$PATH
+  export CHPL_CUDA_PATH=$CUDA_PATH
+  source /opt/chapel-2.0/util/setchplenv.bash
+  USE_MAKE=true
+  ;;
 chapel-1.33)
   export PATH=${CUDA_PATH}/bin:$PATH
   export CHPL_CUDA_PATH=$CUDA_PATH
   source /opt/chapel-1.33/util/setchplenv.bash
   USE_MAKE=true
   ;;
-cuda-11)
+chapel-1.32)
+  export PATH=${CUDA_PATH}/bin:$PATH
+  export CHPL_CUDA_PATH=$CUDA_PATH
+  source /opt/chapel-1.32/util/setchplenv.bash
+  USE_MAKE=true
+  ;;
+cuda-12)
   append_opts "-DCMAKE_CXX_COMPILER=$CUDA_PATH/bin/nvc++"
   ;;
 clang-17.0.6)

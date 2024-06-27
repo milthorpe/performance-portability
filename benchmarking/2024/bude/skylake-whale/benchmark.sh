@@ -7,7 +7,12 @@ function usage() {
   echo "Usage: ./benchmark.sh build|run [COMPILER] [MODEL]"
   echo
   echo "Valid compilers:"
+  echo "  chapel-2.1"
+  echo "  chapel-2.0"
   echo "  chapel-1.33"
+  echo "  chapel-1.32"
+  echo "  chapel-1.31"
+  echo "  chapel-1.30"
   echo "  clang-17.0.6"
   echo
   echo "Valid models:"
@@ -35,8 +40,28 @@ handle_cmd "${1}" "${2}" "${3}" "miniBUDE" "skylake"
 export USE_MAKE=false
 
 case "$COMPILER" in
+chapel-2.1)
+  source /opt/chapel-2.1/util/setchplenv.bash
+  USE_MAKE=true
+  ;;
+chapel-2.0)
+  source /opt/chapel-2.0/util/setchplenv.bash
+  USE_MAKE=true
+  ;;
 chapel-1.33)
   source /opt/chapel-1.33/util/setchplenv.bash
+  USE_MAKE=true
+  ;;
+chapel-1.32)
+  source /opt/chapel-1.32/util/setchplenv.bash
+  USE_MAKE=true
+  ;;
+chapel-1.31)
+  source /opt/chapel-1.31/util/setchplenv.bash
+  USE_MAKE=true
+  ;;
+chapel-1.30)
+  source /opt/chapel-1.30/util/setchplenv.bash
   USE_MAKE=true
   ;;
 clang-17.0.6)
