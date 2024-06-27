@@ -56,7 +56,7 @@ load_oneapi() {
 check_vars() {
   local var_names=("$@")
   for var_name in "${var_names[@]}"; do
-    [ -z "${!var_name}" ] && echo "$var_name is unset." && var_unset=true
+    [ -z ${!var_name+x} ] && echo "$var_name is unset." && var_unset=true
   done
   [ -n "${var_unset:-}" ] && exit 1
   return 0
