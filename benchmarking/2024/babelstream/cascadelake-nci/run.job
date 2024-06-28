@@ -1,0 +1,53 @@
+#!/bin/bash
+#PBS -P px94
+#PBS -q normal
+#PBS -l ncpus=48
+#PBS -l mem=192GB
+#PBS -l walltime=00:05:00
+#PBS -l wd
+#PBS -joe
+
+set -eu
+
+module load gcc/12.2.0 llvm/17.0.1
+
+cd "$RUN_DIR" || exit 2
+date
+echo "$PWD"
+ldd "$BENCHMARK_EXE"
+lscpu
+cat /proc/cpuinfo
+
+if [ "${LARGE:-}" = true ]; then
+    opts=("--arraysize" "536870912")
+else
+    opts=("--arraysize" "268435456") # four times the size of Rome LLC
+fi 
+
+case "$MODEL" in
+chapel)
+    source /scratch/px94/chapel-2.0/util/setchplenv.bash
+    export CHPL_RT_NUM_THREADS_PER_LOCALE=48
+    export CHPL_TARGET_CPU=cascadelake
+    export CHPL_COMM=none
+    export CHPL_LAUNCHER=none
+    export HWLOC_HIDE_ERRORS=0
+    export HWLOC_GROUPING_VERBOSE=1
+    export HWLOC_COMPONENTS_VERBOSE=1
+    "$BENCHMARK_EXE" "${opts[@]:-}" -nl 1
+    "$BENCHMARK_EXE" "${opts[@]:-}" -nl 1
+    "$BENCHMARK_EXE" "${opts[@]:-}" -nl 1
+    ;;
+omp | tbb | std-* | kokkos)
+    export OMP_NUM_THREADS=48
+    export OMP_PROC_BIND=true
+    export OMP_PLACES=cores
+    "$BENCHMARK_EXE" "${opts[@]:-}"
+    "$BENCHMARK_EXE" "${opts[@]:-}"
+    "$BENCHMARK_EXE" "${opts[@]:-}"
+    ;;
+*)
+    echo "Unknown run configuration for model '$MODEL'"
+    exit 1
+    ;;
+esac

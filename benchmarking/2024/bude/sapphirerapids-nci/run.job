@@ -1,0 +1,46 @@
+#!/bin/bash
+#PBS -P px94
+#PBS -q normalsr
+#PBS -l ncpus=104
+#PBS -l other=hyperthread
+#PBS -l mem=256GB
+#PBS -l walltime=00:10:00
+#PBS -l wd
+#PBS -joe
+
+set -eu
+
+module load gcc/12.2.0
+
+cd "$RUN_DIR" || exit 2
+date
+echo "$PWD"
+ldd "$BENCHMARK_EXE"
+lscpu
+cat /proc/cpuinfo
+
+if [ "${LARGE:-}" = true ]; then
+    opts=("--arraysize" "536870912")
+else
+    opts=("--arraysize" "268435456") # four times the size of Rome LLC
+fi 
+
+case "$MODEL" in
+chapel)
+    source /scratch/px94/chapel-2.0/util/setchplenv.bash
+    export CHPL_RT_NUM_THREADS_PER_LOCALE=MAX_LOGICAL
+    export CHPL_COMM=none
+    export CHPL_LAUNCHER=none
+    "$BENCHMARK_EXE" --deck miniBUDE/data/bm1 --wgsize 1 
+    ;;
+omp | tbb | std-* | kokkos)
+    export OMP_NUM_THREADS=208
+    export OMP_PROC_BIND=true
+    export OMP_PLACES=cores
+    "$BENCHMARK_EXE" --deck miniBUDE/data/bm1 --wgsize 1 --ppwi 32,64,128
+    ;;
+*)
+    echo "Unknown run configuration for model '$MODEL'"
+    exit 1
+    ;;
+esac

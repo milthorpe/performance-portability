@@ -1,0 +1,35 @@
+#!/bin/bash
+#PBS -P px94
+#PBS -q normalsr
+#PBS -l ncpus=104
+#PBS -l mem=256GB
+#PBS -l walltime=00:20:00
+#PBS -l wd
+#PBS -joe
+
+set -eu
+
+cd "$RUN_DIR" || exit 2
+date
+echo "$PWD"
+ldd "$BENCHMARK_EXE"
+
+cp $SRC_DIR/Benchmarks/tea_bm_5.in tea.in
+cp $SRC_DIR/tea.problems tea.problems
+
+case "$MODEL" in
+chapel)
+    export CHPL_RT_NUM_THREADS_PER_LOCALE=104
+    "$BENCHMARK_EXE" "${opts[@]:-}"
+    ;;
+omp | std-* | cuda | kokkos)
+    export OMP_NUM_THREADS=104
+    export OMP_PROC_BIND=true
+    export OMP_PLACES=cores
+    "$BENCHMARK_EXE" "${opts[@]:-}"
+    ;;
+*)
+    echo "Unknown run configuration for model '$MODEL'"
+    exit 1
+    ;;
+esac
