@@ -38,6 +38,14 @@ export USE_MAKE=false
 export USE_SLURM=true
 
 case "$COMPILER" in
+chapel-2.1)
+  module load cray-python amd/5.4.3 PrgEnv-amd/8.5.0
+  source /lustre/orion/csc567/world-shared/milthorpe/chapel/util/setchplenv.bash
+  export CHPL_LLVM=system
+  export CHPL_COMM=none
+  export CHPL_LAUNCHER=none
+  USE_MAKE=true
+  ;;
 chapel-2.0)
   module load cray-python amd/5.4.3 PrgEnv-amd/8.5.0
   source /lustre/orion/csc567/world-shared/milthorpe/chapel-2.0/util/setchplenv.bash

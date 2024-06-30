@@ -9,6 +9,7 @@ function usage() {
   echo "Valid compilers:"
   echo "  chapel-1.33"
   echo "  chapel-2.0"
+  echo "  chapel-2.1"
   echo "  rocm-5.4.3"
   echo "  rocm-6.0.0"
   echo
@@ -41,7 +42,7 @@ export USE_MAKE=false
 case "$COMPILER" in
 chapel-1.33)
   module load cray-python amd/5.4.3 PrgEnv-amd/8.5.0
-  source /lustre/orion/csc383/world-shared/milthorpe/chapel-1.33/util/setchplenv.bash
+  source /lustre/orion/csc567/world-shared/milthorpe/chapel-1.33/util/setchplenv.bash
   export CHPL_LLVM=bundled
   export CHPL_COMM=none
   export CHPL_LAUNCHER=none
@@ -49,7 +50,15 @@ chapel-1.33)
   ;;
 chapel-2.0)
   module load cray-python amd/5.4.3 PrgEnv-amd/8.5.0
-  source /lustre/orion/csc383/world-shared/milthorpe/chapel-2.0/util/setchplenv.bash
+  source /lustre/orion/csc567/world-shared/milthorpe/chapel-2.0/util/setchplenv.bash
+  export CHPL_LLVM=system
+  export CHPL_COMM=none
+  export CHPL_LAUNCHER=none
+  USE_MAKE=true
+  ;;
+chapel-2.1)
+  module load cray-python amd/5.4.3 PrgEnv-amd/8.5.0
+  source /lustre/orion/csc567/world-shared/milthorpe/chapel/util/setchplenv.bash
   export CHPL_LLVM=system
   export CHPL_COMM=none
   export CHPL_LAUNCHER=none

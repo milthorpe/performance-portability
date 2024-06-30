@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH -A CSC567
 #SBATCH -J miniBUDE
-#PBS -l walltime=00:10:00
+#PBS -l walltime=00:59:00
 #SBATCH -p batch
 #SBATCH -N 1
 #PBS -joe
@@ -32,10 +32,6 @@ export OMP_TARGET_OFFLOAD=MANDATORY
 
 case "$MODEL" in
 chapel)
-    source /lustre/orion/csc567/world-shared/milthorpe/chapel-2.0/util/setchplenv.bash
-    export CHPL_LLVM=system
-    export CHPL_COMM=none
-    export CHPL_LAUNCHER=none
     export SLURM_CPUS_PER_TASK=56 # Frontier reserves 8 cores for system processes
     ROCR_VISIBLE_DEVICES=0 "$BENCHMARK_EXE" "${opts[@]:-}"
     ;;
